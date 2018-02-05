@@ -1,0 +1,177 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.9.0
+    # We were not able to make work with /home/circleci/cache
+    # Need to check documentation if we missed something
+    # Confirms that it exits at first failure https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
+    environment:
+      TS_NODE_CACHE_DIRECTORY: /home/circleci/bm-toolbox/cache
+      CACHE_REQUIRE_PATHS_FILE: /home/circleci/bm-toolbox/cache/.cache-require-paths.json
+    working_directory: ~/bm-toolbox
+    steps:
+      - checkout
+      # Required later for image tests
+      - run: cp package-lock.json package-lock.json.tmp
+      - save_cache:
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/bm-toolbox
+      - restore_cache:
+          keys:
+            - v1-dependency-cache-{{ checksum "package-lock.json.tmp" }}
+      - run:
+          name: Install node modules
+          command: npm install
+      - save_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json.tmp" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Perform tslint Check
+          command: npm run tslint
+      - run:
+          name: Perform Stylelint check
+          command: |
+            npm run stylelint
+            npm run stylelint:test
+      # This gets the hash of the master commit from which the current branch split off
+      - run:
+          name: Create cache key for cache-require-paths
+          command: |
+            git merge-base HEAD origin/master > git-hash.txt
+            date +%F > date.txt
+      - restore_cache:
+          keys:
+            # "restore_cache" can have a partial match of the cache key.
+            # It first tries the full 3-part key (master commit + branch name + date),
+            # then only the first 2 parts and finally only the first part.
+            # The stored key ("save_cache" below) is the full 3-part key.
+            - require-path-cache-{{ checksum "git-hash.txt" }}-{{ .Branch }}-{{ checksum "date.txt" }}
+            - require-path-cache-{{ checksum "git-hash.txt" }}-{{ .Branch }}
+            - require-path-cache-{{ checksum "git-hash.txt" }}
+      - run: mkdir -p ./cache
+      - run:
+          command: |
+            npm run test:circleci
+            # for every folder in coverage/, archive the contents as a .tar.gz and remove the folder
+            for dir in $(find coverage/* -maxdepth 0 -type d -exec basename {} \;); do tar czf coverage/$dir{.tar.gz,} --remove-files; done
+
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+      - save_cache:
+          key: require-path-cache-{{ checksum "git-hash.txt" }}-{{ .Branch }}-{{ checksum "date.txt" }}
+          paths:
+            - ./cache
+      - store_test_results:
+          path: junit
+      - store_artifacts:
+          path: junit
+          destination:  junit
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+      - run:
+          name: Building xmlConverter lib
+          command: |
+            npm run build-xml-converter
+            : static folder contains css and font files that are bot needed for using xml-converter
+            rm -r dist/static
+      - store_artifacts:
+          path: dist/
+          destination: xml-converter/
+
+      - run:
+          name: Building GizmoViewer and Series Player
+          command: npm run build
+      - store_artifacts:
+          path: dist/
+          destination: gremlins/
+
+      - run:
+          name: Building Styleguide
+          command: npm run styleguide:build
+      - store_artifacts:
+          path: src/components/_styleguide/dist/
+          destination: styleguide/
+
+      - persist_to_workspace:
+          root: ~/bm-toolbox
+          paths:
+            - dist
+            - src/components/_styleguide/dist
+            - circle.run_deploy.sh
+  image-tests:
+    docker:
+      - image: circleci/node:8.7.0
+      # https://circleci.com/docs/2.0/executor-types/#using-multiple-docker-images
+      - image: bettermarks/docker-image-chrome
+    working_directory: ~/bm-toolbox
+    environment:
+      CIRCLE_ARTIFACTS: /tmp
+    steps:
+      - restore_cache:
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Only run image-tests if branch is mergeable
+          command: git merge-base --is-ancestor origin/master HEAD
+      - restore_cache:
+          keys:
+            - v1-dependency-cache-{{ checksum "package-lock.json.tmp" }}
+      - attach_workspace:
+          at: /tmp/build_output/
+      - run: ln -s /tmp/build_output/dist /tmp/gremlins
+      - run: ln -s /tmp/build_output/src/components/_styleguide/dist /tmp/styleguide
+      - run:
+          name: Start gizmoviewer
+          command: npm run http-dist -- 8100 $CIRCLE_ARTIFACTS/gremlins/
+          background: true
+      - run:
+          name: Start Styleguidist
+          command: npm run http-dist -- 6060 $CIRCLE_ARTIFACTS/styleguide/
+          background: true
+      - run:
+          name: Execute Image tests
+          command: npm run image:test:ci
+
+      - store_test_results:
+          path: junit
+      - store_artifacts:
+          path: junit
+          destination:  junit
+      - store_artifacts:
+          path: /home/circleci/.npm/_logs
+          destination:  npm-logs
+      - store_artifacts:
+          path: report.html
+          destination: report.html
+
+  deployment:
+    working_directory: /tmp/
+    machine: true
+    # Minor workaround to keep circle.run_deploy.sh unchanged
+    environment:
+      CIRCLE_ARTIFACTS: /tmp
+    steps:
+      - attach_workspace:
+          at: /tmp/build_output/
+      - run: ln -s /tmp/build_output/dist /tmp/gremlins
+      - run: ln -s /tmp/build_output/src/components/_styleguide/dist /tmp/styleguide
+      - run: /tmp/build_output/circle.run_deploy.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - image-tests:
+          requires:
+            - build
+      - deployment:
+          requires:
+            - image-tests
+          filters:
+            branches:
+              only: master

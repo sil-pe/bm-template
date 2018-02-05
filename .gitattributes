@@ -1,0 +1,5 @@
+tools/* linguist-vendored=false
+testplayer/* linguist-vendored=false
+lib/* linguist-generated=true
+*.js linguist-vendored
+*.json linguist-vendored

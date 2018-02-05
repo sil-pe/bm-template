@@ -1,0 +1,17 @@
+@import '../../components/_sass/base';
+
+.hLayout {
+  display: flex;
+  flex: 1 1 auto;
+  max-height: 100%;
+  width: 100%;
+  min-height: 0; //fix for firefox
+}
+
+.vLayout {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  width: 100%;
+}
+

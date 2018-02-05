@@ -1,0 +1,115 @@
+@import '../_sass/base';
+
+//DIMENSIONS
+$btn-minimum-width: $min-clickable-width - 2 * $space-xxs;
+$btn-minimum-height: $btn-min-height;
+$btn-border-radius: $border-radius-m;
+$btn-icon-size: $btn-size-s;
+$btn-font-weight: $font-weight-bold;
+$btn-padding-horizontal: $space-s;
+
+//CLICKABLE AREA
+$btn-clickable-area-min-width: $min-clickable-width;
+$btn-clickable-area-bg-color: transparent;
+$btn-clickable-area-positioning: $btn-clickable-position;
+
+//COLORS
+$btn-bg-color: $c-blue-600;
+$btn-bg-color-hover: $c-blue-700;
+$btn-disabled-bg-color: $c-gray-400;
+$btn-default-bg-color: $c-blue-600;
+$btn-error-bg-color: $c-red-600;
+$btn-error-bg-color-hover: $btn-error-bg-color - $hover-change;
+$btn-remark-bg-color: $c-yellow-600;
+$btn-remark-bg-color-hover: $btn-remark-bg-color - $hover-change;
+$btn-correct-bg-color: $c-green-600;
+$btn-correct-bg-color-hover: $btn-correct-bg-color - $hover-change;
+$btn-text-color: $c-white;
+$btn-icon-color: $c-white;
+
+.btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn {
+  min-width: $btn-minimum-width;
+  min-height: $btn-minimum-height;
+  border-radius: $btn-border-radius;
+  color: $btn-text-color;
+  font-weight: $btn-font-weight;
+  border: none;
+  outline: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 $btn-padding-horizontal;
+  &.disabled {
+    background-color: $btn-disabled-bg-color;
+  }
+
+  &.enabled {
+    cursor: pointer;
+
+    &.default {
+      background-color: $btn-bg-color;
+    }
+
+    &.error {
+      background-color: $btn-error-bg-color;
+    }
+
+    &.remark {
+      background-color: $btn-remark-bg-color;
+    }
+
+    &.correct {
+      background-color: $btn-correct-bg-color;
+    }
+  }
+
+  svg {
+    fill: $btn-icon-color;
+    height: $btn-icon-size;
+    width: $btn-icon-size;
+    margin: 0 auto;
+    display: block;
+  }
+}
+
+.btn-clickable-area {
+  background-color: $btn-clickable-area-bg-color;
+  min-height: $min-clickable-height;
+  min-width: $btn-clickable-area-min-width;
+  display: inline-block;
+  position: absolute;
+  top: $btn-clickable-area-positioning;
+  left: 0;
+  right: 0;
+  bottom: (-$btn-clickable-area-positioning);
+  z-index: 1;
+
+  &.enabled {
+    cursor: pointer;
+
+    &:hover + .btn.enabled.default {
+      background-color: $btn-bg-color-hover;
+    }
+
+    &:hover + .btn.enabled.error {
+      background-color: $btn-error-bg-color-hover;
+    }
+
+    &:hover + .btn.enabled.remark {
+      background-color: $btn-remark-bg-color-hover;
+    }
+
+    &:hover + .btn.enabled.correct {
+      background-color: $btn-correct-bg-color-hover;
+    }
+  }
+}
+
+.stretch {
+  width: 100%;
+}

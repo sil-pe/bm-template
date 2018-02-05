@@ -1,0 +1,28 @@
+@import '../../components/_sass/base';
+
+// stylelint-disable color-named
+$c-demo-black: black;
+$c-demo-blue: lightskyblue;
+$c-demo-red: lightpink;
+$c-demo-green: lightgreen;
+
+.outerBox200 {
+  height: 200px;
+  border: 1px solid $c-demo-black;
+  overflow: hidden;
+}
+
+.height500 {
+  height: 500px;
+}
+
+.bgBlue {
+  background-color: $c-demo-blue;
+}
+.bgGreen {
+  background-color: $c-demo-green;
+}
+.bgRed {
+  background-color: $c-demo-red;
+}
+

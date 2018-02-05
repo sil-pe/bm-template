@@ -1,0 +1,59 @@
+@import '../../_sass/base';
+
+// COLORS
+$header-background-color: $c-white;
+$header-border-color: $c-gray-500;
+$dialog-background-color: $c-white;
+$backdrop-background: rgba(0, 0, 0, 0.3);
+$dialog-body-color: $c-gray-800;
+// DIMENSIONS
+$header-height: 45px;
+$dialog-spacing: $space-s;
+$dialog-child-spacing: $space-m;
+
+.content-dialog {
+  position: absolute;
+  top: $dialog-spacing;
+  bottom: $dialog-spacing;
+  left: $dialog-spacing;
+  right: $dialog-spacing;
+  z-index: 9999;
+  background: $dialog-background-color;
+}
+
+.backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  background: $backdrop-background;
+}
+
+.content-dialog-body {
+  color: $dialog-body-color;
+  padding: $dialog-spacing;
+  > * {
+    margin-bottom: $dialog-child-spacing;
+  }
+}
+
+.content-dialog-header {
+  height: $header-height;
+  padding: $dialog-spacing;
+  border-bottom: $border-width-m solid $header-border-color;
+  background-color: $header-background-color;
+
+  .back-button {
+    position: absolute;
+    margin-top: $space-xs;
+  }
+
+  .title {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    line-height: $header-height;
+  }
+}

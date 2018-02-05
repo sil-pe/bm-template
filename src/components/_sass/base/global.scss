@@ -1,0 +1,6 @@
+@import './colors';
+
+:global(.curve-head) {
+  // This styles <marker> and should ideally live inside symbol node in the svg sprite section
+  fill: $c-text-dark;
+}

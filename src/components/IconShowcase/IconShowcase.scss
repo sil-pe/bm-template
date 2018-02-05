@@ -1,0 +1,16 @@
+@import '../_sass/base';
+
+$icon-color: $c-blue-600;
+$icon-size: $btn-size-s;
+
+.box {
+  display: inline-block;
+  margin: $space-m;
+}
+
+.icon {
+  fill: $icon-color;
+  height: $icon-size;
+  width: $icon-size;
+  margin: $space-m 0;
+}

@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "target": "ES2016",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "lib": [
+        "dom",
+        "es6"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "components*": ["src/components*"],
+      "test*": ["./test*"]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/type-declarations"
+    ],
+    "types": [
+      "mocha",
+      "node"
+    ]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "dist",
+    "tmp"
+  ]
+}

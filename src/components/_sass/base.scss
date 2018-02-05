@@ -1,0 +1,11 @@
+/************************************************************
+* This file groups all sass files needed to run the project *
+*      Please do not add any styling rules to this file     *
+*************************************************************/
+
+$font-family: 'Noto Sans Symbols', 'Roboto', sans-serif;
+$c-text-dark: #333333;
+
+// While you are allowed to specify file extensions, you should avoid doing so
+@import 'base/colors';
+@import 'base/dimensions';

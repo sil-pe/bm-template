@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+  <!-- https://developers.google.com/web/fundamentals/native-hardware/fullscreen/ -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link type="text/css" rel="stylesheet" href="assets/css/reset-and-fonts.css"/>
+  <!-- core-js was added here because we cannot inject it to the styleguide webpack entry point -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.1/core.min.js">
+  </script>
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="container container_app"></div>
+</body>
+</html>
+<!-- <%= htmlWebpackPlugin.options.comment %> -->

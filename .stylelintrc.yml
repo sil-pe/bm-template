@@ -1,0 +1,111 @@
+defaultSeverity: "error"
+
+extends: # https://stylelint.io/user-guide/configuration/#extends
+
+# https://github.com/stylelint/stylelint-config-standard/blob/master/index.js
+# extends https://github.com/stylelint/stylelint-config-recommended/blob/master/index.js
+  - stylelint-config-standard
+
+# https://github.com/danilobuerger/stylelint-config-concentric#stylelint-config-concentric
+# for concentric property order: http://rhodesmill.org/brandon/2011/concentric-css/
+#  - stylelint-config-concentric
+
+
+plugins: # https://stylelint.io/user-guide/plugins/
+
+# https://github.com/adityavm/stylelint-at-rule-no-children#configuration
+  - stylelint-at-rule-no-children # namespace adityavm/
+
+#  https://github.com/AndyOGo/stylelint-declaration-strict-value#usage
+  - stylelint-declaration-strict-value # namespace scale-unlimited/
+
+# https://github.com/hudochenkov/stylelint-order#list-of-rules
+  - stylelint-order # namespace order/
+
+# https://github.com/kristerkari/stylelint-scss/tree/master#list-of-rules
+  - stylelint-scss # namespace scss/
+
+
+rules: # https://stylelint.io/user-guide/rules/
+
+  scss/at-extend-no-missing-placeholder: true
+
+  scss/at-import-partial-extension-whitelist: ["scss"]
+  scss/at-import-no-partial-leading-underscore: true
+
+### at-rule
+  at-rule-blacklist: ["warn", "debug"]
+  aditayvm/at-rule-no-children: [{}]
+  at-rule-no-unknown: null # from recommended, using scss/at-rule-no-unknown to allow SASS stuff
+  scss/at-rule-no-unknown: [true]
+
+  color-hex-case: null # from standard, might make sense just need to decide "lower"/"upper"
+  color-hex-length: null # from standard, might make sense just need to decide "short"/"long"
+  color-named: "never"
+
+  declaration-empty-line-before: null # from standard
+  declaration-no-important: true
+  declaration-property-value-blacklist: {
+#    "/^border/": ["none"] # or ["0"] exclude one to make it consistent
+  }
+  scale-unlimited/declaration-strict-value: [
+    ["/color/", "/background/"], # , "/border/", "box-shadow" (would be nice but to many places right now)
+    {
+      ignoreFunctions: false,
+      ignoreKeywords: ["currentColor", "inherit", "none", "transparent"]
+    }
+  ]
+
+### $variables
+  scss/dollar-variable-colon-space-after: "always"
+  scss/dollar-variable-colon-space-before: "never"
+  scss/dollar-variable-pattern: "[a-z]+(-[a-z]+)?"
+
+  function-comma-space-after: null # from standard, might make sense
+
+  length-zero-no-unit: true
+
+  no-duplicate-selectors: true
+  no-descending-specificity: null
+
+  order/order: [
+    [
+      {type: "at-rule", name: "extend"},
+      {type: "at-rule", name: "include"}, # breakpoint and mq are excluded by being more explicit below
+      "custom-properties",
+      "dollar-variables",
+      "declarations",
+      "rules",
+      {type: "at-rule", name: "include", parameter: "breakpoint"},
+      {type: "at-rule", name: "include", parameter: "mq"},
+      "at-rules"
+    ],
+    {
+      "disableFix": true
+    }
+  ]
+
+  scss/operator-no-unspaced: true
+
+  property-no-unknown: [ true, {
+    ignoreProperties: ["composes"],
+    checkPrefixed: true
+  }]
+
+  rule-empty-line-before: null # from standard
+
+### selector
+  selector-list-comma-newline-after: null # from standard
+  selector-max-id: 0 # no ids as selectors
+#  https://github.com/kristerkari/stylelint-scss/blob/master/src/rules/selector-no-redundant-nesting-selector/README.md
+#  scss/selector-no-redundant-nesting-selector: true
+  selector-pseudo-class-no-unknown: [ true, {
+    ignorePseudoClasses: ["export", "global"]
+  }]
+# https://stylelint.io/user-guide/rules/selector-pseudo-element-colon-notation/
+  selector-pseudo-element-colon-notation: null # from standard, might make sense
+
+  string-quotes: "single"
+
+  unit-no-unknown: true
+  unit-whitelist: ["%", "px", "s"] # use declaration-property-unit-whitelist to specify per property

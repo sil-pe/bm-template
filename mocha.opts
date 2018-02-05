@@ -1,0 +1,8 @@
+--require cache-require-paths
+--require test/tshook.js
+--require test/setup.js
+--require jsdom-global/register
+--reporter spec
+--watch-extensions tsx,ts
+src/**/*.spec.tsx
+src/**/*.spec.ts

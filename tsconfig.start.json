@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "target": "ES2016",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "lib": [
+        "dom",
+        "es6"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "gizmos*": ["src/gizmos*"],
+      "components*": ["src/components*"],
+      "gizmo-utils*": ["src/gizmo-utils*"],
+      "xml-converter*": ["src/xml-converter*"]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/type-declarations"
+    ],
+    "types": [
+      "webpack-env"
+    ]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tmp",
+    "./src/**/*.spec.ts",
+    "./src/**/*.spec.tsx"
+  ]
+}
