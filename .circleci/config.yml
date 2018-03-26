@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9.0
+      - image: circleci/node:8.10.0
     # We were not able to make work with /home/circleci/cache
     # Need to check documentation if we missed something
     # Confirms that it exits at first failure https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
@@ -105,7 +105,7 @@ jobs:
             - circle.run_deploy.sh
   image-tests:
     docker:
-      - image: circleci/node:8.7.0
+      - image: circleci/node:8.10.0
       # https://circleci.com/docs/2.0/executor-types/#using-multiple-docker-images
       - image: bettermarks/docker-image-chrome
     working_directory: ~/bm-toolbox
