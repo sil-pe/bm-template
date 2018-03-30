@@ -13,8 +13,10 @@
   "author": "Saurabh Gupta <saurabh2590@gmail.com>",
   "private": true,
   "scripts": {
+    "all-checks": "npm run tsc; npm run test; npm run tslint; npm run stylelint",
     "preinstall": "npx check-node-version --package",
     "build": "NODE_ENV=production TARGET=APP node webpack.config.js",
+    "check": "npx npm-check -u --skip-unused",
     "check-version": "check-node-version --package",
     "test": "mocha --opts mocha.opts",
     "test:coverage": "nyc npm test",
@@ -24,11 +26,12 @@
     "start": "NODE_ENV=development TARGET=APP node webpack.config.js",
     "tsc": "tsc --noEmit",
     "tslint": "tslint -c tslint.json --project tsconfig.json -t stylish",
+    "tslint:fix": "npm run tslint -- --fix",
     "stylelint": "stylelint \"**/*.scss\"",
+    "stylelint:test": "stylelint test/linter.specss --syntax scss > test/linter.specss.out || git diff --exit-code test/linter.specss.out",
     "doc": "typedoc --out doc",
     "styleguide": "NODE_ENV=development TARGET=STYLEGUIDE node webpack.config.js",
     "styleguide:build": "NODE_ENV=production TARGET=STYLEGUIDE node webpack.config.js",
-    "test-all": "npm-run-all -p -r tslint sass:lint test",
     "http-dist": "ts-node lib/http-dist"
   },
   "nyc": {
