@@ -90,27 +90,31 @@ if (i18nElements.length < 1) {
   process.exit(1);
 }
 
-Array.prototype.slice.apply(i18nElements).forEach((i18nElement: Element) => {
-  const lang = i18nElement.attributes.getNamedItem('locale').value;
-  const i18n: any = {};
-  const stringElements = i18nElement.getElementsByTagName('string');
+Array.prototype.slice.apply(i18nElements)
+  .filter((i18nElement: Element) => !!i18nElement)
+  .forEach((i18nElement: Element) => {
+    const locale = i18nElement.attributes.getNamedItem('locale');
+    const lang = locale === null ? '' : locale.value;
+    const i18n: any = {};
+    const stringElements = i18nElement.getElementsByTagName('string');
 
-  Array.prototype.slice.apply(stringElements).forEach((stringElement: Element) => {
-    const key = stringElement.attributes.getNamedItem('key').value;
-    const str = stringElement.textContent;
+    Array.prototype.slice.apply(stringElements).forEach((stringElement: Element) => {
+      const keyElem = stringElement.attributes.getNamedItem('key');
+      const key = keyElem === null ? '' : keyElem.value;
+      const str = stringElement.textContent;
 
-    // nested keys like "button.tooltip.minusButton" should become nested objects:
-    // {"button": {"tooltop": {"minusButton": ...}}}
-    const pathKey = [namespace, ...key.split('.')];
+      // nested keys like "button.tooltip.minusButton" should become nested objects:
+      // {"button": {"tooltop": {"minusButton": ...}}}
+      const pathKey = [namespace, ...key.split('.')];
 
-    set(i18n, pathKey, str);
+      set(i18n, pathKey, str);
+    });
+
+    const jsonPath = path.resolve(outputPath, `${lang}.json`);
+    const json = JSON.stringify(i18n, null, 2);
+
+    console.log(`Writing file: ${jsonPath}`);
+
+    fs.writeFileSync(jsonPath, json);
   });
-
-  const jsonPath = path.resolve(outputPath, `${lang}.json`);
-  const json = JSON.stringify(i18n, null, 2);
-
-  console.log(`Writing file: ${jsonPath}`);
-
-  fs.writeFileSync(jsonPath, json);
-});
 

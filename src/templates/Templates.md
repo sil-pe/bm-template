@@ -9,7 +9,3 @@ These files are used by HtmlWebpackPlugin to generate the final HTML that will b
 ## Seriesplayer
 
 `index_app.html` is used at `webpack.app.config.js` when defining the path of HtmlWebpackPlugin.
-
-## Styleguide
-
-`index_styleguide.html` is used at `styleguide.config.js` when defining the template attribute for the styleguidist configuration.

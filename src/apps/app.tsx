@@ -6,9 +6,9 @@ import {render} from 'react-dom';
 import * as qs from 'query-string';
 import {I18nextProvider} from 'react-i18next';
 import createHistory from 'history/createHashHistory';
-import {createStore} from './store';
-import {i18n} from './i18n';
-import {DashboardContainer} from './containers/dashboard';
+import {createStore} from '../store';
+import {i18n} from '../i18n';
+import {DashboardContainer} from '../containers/dashboard';
 
 const history = createHistory();
 const store = createStore(history);
