@@ -10,15 +10,18 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "lib": [
-        "dom",
-        "es6"
+      "dom",
+      "es6"
     ],
     "baseUrl": ".",
     "paths": {
-      "gizmos*": ["src/gizmos*"],
+      "*": ["src/*"],
+      "src*": ["src/*"],
+      "lib*": ["lib/*"],
       "components*": ["src/components*"],
-      "gizmo-utils*": ["src/gizmo-utils*"],
-      "xml-converter*": ["src/xml-converter*"]
+      "gizmos*": ["src/gizmos*"],
+      "xml-converter*": ["src/xml-converter*"],
+      "gizmo-utils*": ["src/gizmo-utils*"]
     },
     "typeRoots": [
       "./node_modules/@types",
