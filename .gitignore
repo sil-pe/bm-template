@@ -98,6 +98,7 @@ dist
 tmp
 doc
 .awcache
+.cache/*
 
 # ignore yarn.lock, as we use npm now
 yarn.lock

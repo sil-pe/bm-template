@@ -4,25 +4,24 @@
     "jsx": "react",
     "module": "commonjs",
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
     "strictNullChecks": true,
     "preserveConstEnums": true,
     "removeComments": true,
     "target": "ES6",
     "sourceMap": true,
     "experimentalDecorators": true,
+    "noErrorTruncation": true,
     "lib": [
       "dom",
       "es6"
     ],
     "baseUrl": ".",
     "paths": {
-      "components*": [
-        "src/components*"
-      ],
-      "test*": [
-        "test*"
-      ]
+      "components*": ["src/components*"],
+      "gizmos*": ["src/gizmos*"],
+      "xml-converter*": ["src/xml-converter*"],
+      "test*": ["test*"],
+      "gizmo-utils*": ["src/gizmo-utils*"]
     },
     "typeRoots": [
       "./node_modules/@types",

@@ -1,0 +1,6 @@
+{
+  "contentManagerUrl": "//school.bettermarks.loc",
+  "resultManagerUrl": "//school.bettermarks.loc",
+  "staticServerUrl": "//content.bettermarks.com",
+  "validatorUrl": "//vaas-dev.bettermarks.com/validation"
+}

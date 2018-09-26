@@ -4,38 +4,54 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 
-/**************** LOADERS *********************/
-const getSassLoader = isProductionMode => {
 
-  const ExtractTextPlugin = require('extract-text-webpack-plugin');
+/**************** LOADERS *********************/
+const getLoadersOptionsPlugin = isProductionMode => {
+  return new webpack.LoaderOptionsPlugin({
+    minimize: true,
+    debug: !isProductionMode,
+    options: {
+      context: __dirname
+    }
+  });
+}
+
+const getSassLoader = isProductionMode => {
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin');
   const generateScopedName = require('../lib/css_minifier/cssname_minifier').generateScopedName;
 
   const getlocalIdent =
     isProductionMode
       ? (context, localIdentName, localName) => {
-          return generateScopedName(localName, context.resourcePath);
-        }
+        return generateScopedName(localName, context.resourcePath);
+      }
       : undefined;
 
   return {
     test: /\.scss$/,
-    use: ExtractTextPlugin.extract({
-      fallback: 'style-loader',
-      use: [{
+    use: [
+      {
+        loader: MiniCssExtractPlugin.loader,
+        options: {
+          // you can specify a publicPath here
+          // by default it use publicPath in webpackOptions.output
+          // publicPath: '../',
+          sourceMap: true
+        }
+      }, {
         loader: 'css-loader',
         options: {
-          sourceMap: true,
           modules: true,
           importLoaders: 1,
-          localIdentName: '[path]___[local]___[hash:base64:5]',
+          localIdentName: '[path][name]__[local]--[hash:base64:5]',
           getLocalIdent: getlocalIdent,
           camelCase: true,
-          minimize: true
+          minimize: true,
+          sourceMap: true
         }
       }, {
         loader: 'resolve-url-loader',
         options: {
-          sourceMap: true
         }
       }, {
         loader: 'postcss-loader',
@@ -45,10 +61,14 @@ const getSassLoader = isProductionMode => {
       }, {
         loader: 'sass-loader',
         options: {
-          sourceMap: true
+          sourceMap: true,
+          includePaths: [
+            '../src/components/_sass'
+          ]
+            .map((d) => path.join(__dirname, d))
         }
-      }]
-    })
+      }
+    ]
   };
 
 };
@@ -79,26 +99,51 @@ const getSourceMapLoader = () => {
 
 };
 
-const getTypescriptLoader = () => {
-
-  const tsconfig = 'tsconfig.start.json';
-
+const getTypescriptLoader = (tsconfig = 'tsconfig.start.json') => {
   return {
     test: /\.ts(x?)$/,
     exclude: /node_modules|vendor/,
     use: [
       {
-        loader: 'awesome-typescript-loader',
+        loader: 'cache-loader',
         options: {
-          configFileName: tsconfig,
-          useBabel: true,
-          useCache: true
+          cacheDirectory: path.resolve(__dirname, '..', '.cache', 'cache-loader')
+        }
+      },
+      {
+        loader: 'babel-loader',
+        options: {
+          plugins: 'react-hot-loader/babel'
+        }
+      },
+      {
+        loader: 'thread-loader',
+        options: {
+          // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+          workers: require('os').cpus().length - 1,
+        },
+      },
+      {
+        loader: 'ts-loader',
+        options: {
+          // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack
+          happyPackMode: true
         }
       }
     ]
   };
-
 };
+
+const getForkTsCheckerWebpackPlugin = (config) => {
+  const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+  return new ForkTsCheckerWebpackPlugin(merge.smart(
+    config,
+    {
+      checkSyntacticErrors: true,
+      silent: true
+    }
+  ))
+}
 
 const getSvgLoader = customParams => {
 
@@ -137,22 +182,11 @@ const getUrlLoader = customParams => {
 };
 
 const getRawLoader = customParams => {
-
   return merge.smart({ /* For loading raw files (xml and json) in GizmoViewer */
     test: /\.xml|json$/,
     exclude: /node_modules|src/,
     loader: 'raw-loader'
   }, customParams);
-
-};
-
-const getJsonLoader = () => {
-
-  return {
-    test: /\.json$/,
-    loader: 'json'
-  };
-
 };
 
 const getJsLoader = () => {
@@ -176,26 +210,53 @@ const getCleanWebpackPlugin = (vendorPath, rootDir) => {
   return new CleanWebpackPlugin(...vendorPath, {
     root: rootDir,
     verbose: true,
-    dry: !isProductionMode(),
     exclude: ['node_modules/*']
   });
 
 };
 
-const getExtractTextPlugin = customParams => {
+const getCopyWebpackPlugin = () => {
+  // Helps to copy the xmls from the specific path to required path
+  // flatten: true, just copy the files and ignore the folder path
+  // force: true, overwrite the files even though they exist
+  const CopyWebpackPlugin = require('copy-webpack-plugin');
+  return new CopyWebpackPlugin([
+    {
+      from: './test/gizmos/*.xml',
+      to: './assets/xml/',
+      force: true,
+      flatten: true
+    },
+    {
+      from: './test/exercises/*.xml',
+      to: './assets/xml/',
+      force: true,
+      flatten: true
+    }
+  ]);
+};
 
-  const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const getMiniCssExtractPlugin = customParams => {
 
-  return new ExtractTextPlugin(
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+  return new MiniCssExtractPlugin(
     merge.smart(
       {
         filename: '[name].css',
-        allChunks: true
       },
       customParams
     )
   );
 
+};
+
+const getStatsWriterPlugin = (context, IS_STYLEGUIDE, IS_PRODUCTION_MODE) => {
+  const {StatsWriterPlugin} = require('webpack-stats-plugin');
+  return new StatsWriterPlugin({
+    filename: `${IS_STYLEGUIDE ? '../../../' : ''}../webpack/stats/${context}-${
+      IS_STYLEGUIDE ? 'styleguide-' : ''}${IS_PRODUCTION_MODE ? 'production' : 'development'}.json`
+  });
 };
 
 const getDefinePlugin = config => {
@@ -229,32 +290,21 @@ const getSpriteLoaderPlugin = () => {
 
 const getOptimizeCssAssetsPlugin = () => {
 
-  const cssnano = require('cssnano');
   const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
   return new OptimizeCSSAssetsPlugin({
-    cssProcessor: cssnano,
+    assetNameRegExp: /\.s?css$/,
     cssProcessorOptions: {
+      safe: true,
       discardDuplicates: {
         removeAll: true
       },
       discardComments: {
         removeAll: true
-      },
-      // Run cssnano in safe mode to avoid
-      // potentially unsafe transformations.
-      safe: true
+      }
     },
     canPrint: false
   });
-};
-
-
-const getCheckerPlugin = () => {
-
-  const { CheckerPlugin } = require('awesome-typescript-loader');
-  return new CheckerPlugin();
-
 };
 
 const getHTMLPlugin = customParams => {
@@ -269,175 +319,39 @@ const getHTMLPlugin = customParams => {
 
 };
 
-const getCommonsChunkPlugin = (customParams = {}) => {
-
-  return new webpack.optimize.CommonsChunkPlugin(merge.smart({
-    name: 'vendor',
-    minChunks: Infinity
-  }, customParams));
-
-};
-
-const getMinifyPlugin = () => {
-
-  const MinifyPlugin = require('babel-minify-webpack-plugin');
-  return new MinifyPlugin();
-
-};
-
 const getHotModuleReplacementPlugin = () => {
   return new webpack.HotModuleReplacementPlugin();
 };
 
-/**************** UTILS *********************/
-
-const getDevServer = () => {
-
-  return {
-    disableHostCheck: true,
-    stats: {
-      warnings: false,
-      warningsFilter: warning => {
-        console.log('warning: ' + warning);
-        return true;
-      }
-    }
-  };
-
-};
-
-const generateWebpackStats = (info, webpackProcessName) => {
-
-  const fs = require('fs');
-  const dir = path.resolve(__dirname, 'stats');
-
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-  }
-
-  fs.writeFile(path.resolve(__dirname, `./stats/${webpackProcessName}-stats.json`), JSON.stringify(info), function(err) {
-
-    if(err) return console.log(err);
-    console.log(`${webpackProcessName}-stats.json were saved successfully!`);
-
-  });
-
-}
-
-const createHotDevServer = webpackConfig => {
-
-  const webpackHotMiddleware = require('webpack-hot-middleware');
-  const WebpackDevServer = require("webpack-dev-server");
-
-  const port = 8100;
-  const compiler = webpack(webpackConfig);
-
-  var server = new WebpackDevServer(compiler, {
-    publicPath: webpackConfig.output.publicPath,
-    contentBase: 'dist',
-    hot: true,
-    stats: {
-      colors: true,
-      hash: false,
-      timings: true,
-      chunks: false,
-      chunkModules: false,
-      modules: false
-    },
-    quiet: false,
-    noInfo: false,
-    watchOptions: {
-      poll: true
-    }
-  });
-  server.listen(port);
-
-};
-
 const isProductionMode = () => {
-
   const NODE_ENV = process.env.NODE_ENV || 'development';
-  const isProductionMode = NODE_ENV === 'production';
-
-  return isProductionMode;
-
-};
-
-const compile = (configObject, webpackProcessName) => {
-
-  return new Promise((fulfill, reject) => {
-
-    webpack(configObject, (err, stats) => {
-
-      if (err) {
-        console.error(err.stack || err);
-        if (err.details) {
-          console.error(err.details);
-        }
-      }
-
-      const info = stats.toJson();
-      generateWebpackStats(info, webpackProcessName);
-
-      if (stats.hasErrors()) {
-        console.error(info.errors);
-      }
-
-      if (stats.hasWarnings()) {
-        console.warn(info.warnings);
-      }
-
-      console.log(`Done processing task -> ${webpackProcessName}`);
-      console.log(
-        stats.toString({
-          assets: true,
-          colors: true,
-          chunks: false,
-          errors: true,
-          timings: true,
-          version: true,
-          warnings: true
-        })
-      );
-      fulfill();
-
-    });
-
-  });
-
+  return NODE_ENV === 'production';
 };
 
 module.exports = {
-  loaders: {
+  rules: {
     getSassLoader,
     getFileLoader,
-    getSourceMapLoader,
     getTypescriptLoader,
     getSvgLoader,
     getUrlLoader,
-    getJsonLoader,
-    getRawLoader,
-    getJsLoader
   },
   plugins: {
+    getLoadersOptionsPlugin,
     getCleanWebpackPlugin,
-    getExtractTextPlugin,
+    getCopyWebpackPlugin,
+    getMiniCssExtractPlugin,
     getDllPlugin,
     getDllReferencePlugin,
     getSpriteLoaderPlugin,
     getOptimizeCssAssetsPlugin,
     getDefinePlugin,
-    getCommonsChunkPlugin,
-    getMinifyPlugin,
-    getCheckerPlugin,
     getHTMLPlugin,
-    getHotModuleReplacementPlugin
+    getHotModuleReplacementPlugin,
+    getStatsWriterPlugin,
+    getForkTsCheckerWebpackPlugin
   },
   utils: {
-    getDevServer,
-    compile,
-    generateWebpackStats,
-    createHotDevServer,
     isProductionMode
   }
 };

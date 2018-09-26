@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.10.0
+      - image: circleci/node:10.7
     # We were not able to make work with /home/circleci/cache
     # Need to check documentation if we missed something
     # Confirms that it exits at first failure https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
@@ -105,9 +105,10 @@ jobs:
             - circle.run_deploy.sh
   image-tests:
     docker:
-      - image: circleci/node:8.10.0
+      - image: circleci/node:10.7
       # https://circleci.com/docs/2.0/executor-types/#using-multiple-docker-images
       - image: bettermarks/docker-image-chrome
+      # TODO Change Working Directory from bm-toolbox to bm-template
     working_directory: ~/bm-toolbox
     environment:
       CIRCLE_ARTIFACTS: /tmp

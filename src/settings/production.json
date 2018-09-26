@@ -1,0 +1,6 @@
+{
+  "contentManagerUrl": "https://acc.bettermarks.com",
+  "resultManagerUrl": "https://acc.bettermarks.com",
+  "staticServerUrl": "https://content.bettermarks.com",
+  "validatorUrl": "https://vaas-dev.bettermarks.com/validation"
+}
