@@ -1,7 +1,8 @@
-import {ApplicationState, LoaderStates} from './types';
+import {ApplicationState} from './types';
 import {initialRuntimeState} from '../services/runtime-manager/constants';
-import {ContentDialogTypes} from 'components/';
+import {initialLocalizationState} from 'src/containers/localized/constants';
 
 export const initialApplicationState: Readonly<ApplicationState> = {
-  runtimeState: initialRuntimeState
+  runtimeState: initialRuntimeState,
+  localization: initialLocalizationState
 };

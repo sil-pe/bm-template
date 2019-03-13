@@ -1,0 +1,14 @@
+{
+  "contents": {
+    "dashboard": {
+      "title": "Здравствуйте"
+    },
+    "runtime": {
+      "availableWidth": "доступная ширина",
+      "availableHeight": "Доступная высота",
+      "connectivity": "Статус подключения",
+      "online": "Онлайн",
+      "offline": "Автономный"
+    }
+  }
+}

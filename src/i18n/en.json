@@ -1,7 +1,14 @@
 {
   "contents": {
     "dashboard": {
-      "title": "dashboard title"
+      "title": "Hello"
+    },
+    "runtime": {
+      "availableWidth": "Available width",
+      "availableHeight": "Available height",
+      "connectivity": "Connectivity Status",
+      "online": "Online",
+      "offline": "Offline"
     }
   }
 }

@@ -1,11 +1,14 @@
 import * as Redux from 'redux';
-import {ContentDialogTypes} from 'components/';
 
 export type RuntimeState = Readonly<{
   availableWidth: number;
   availableHeight: number;
   isOnline: boolean;
 }>;
+
+export type LocalizationState = {
+  locale: string;
+};
 
 export enum LoaderStates {
   loading = 'loading',
@@ -19,6 +22,7 @@ export interface Dispatch extends Redux.Dispatch<ApplicationState> {
 
 export type ApplicationState = Readonly<{
   runtimeState: RuntimeState;
+  localization: LocalizationState;
 }>;
 
 export type Store = Redux.Store<ApplicationState>;

@@ -1,0 +1,8 @@
+singleQuote: true
+quotes:
+  - "error"
+  - "single"
+  - avoidEscape: true
+  - allowTemplateLiterals: false
+bracketSpacing: false
+printWidth: 100
