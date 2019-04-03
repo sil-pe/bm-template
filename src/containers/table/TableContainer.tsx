@@ -1,6 +1,12 @@
 import * as React from 'react';
+import {
+  Order,
+  SortingOrder,
+  SortingFunction,
+  SortingColumnGeneratorFunction,
+  ToVoid
+} from './types';
 import {Table, Value} from '../../components/Table';
-import {ChangeEvent} from 'react';
 
 const mockData: Value[] = [];
 
@@ -8,17 +14,9 @@ for (let i = 0; i < 10; i++) {
   const x = Math.round(Math.random() * 9 + 1);
   mockData.push({
     x,
-    y: Math.random().toString(32).replace(/[^a-z]+/, '').substr(0, x)
+    y: Math.random().toString(32).replace(/[^a-z]+/g, '').substr(0, x)
   })
 }
-
-const enum Order {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
-
-type SortingOrder = Order.ASC | Order.DESC;
 
 interface State {
   data: Value[];
@@ -27,52 +25,55 @@ interface State {
   searchText: string
 }
 
-export class TableContainer extends React.PureComponent<{}, State> {
+interface Props {
+
+}
+
+export class TableContainer extends React.PureComponent<Props, State> {
   state = {
     data: mockData,
     xSortingOrder: Order.ASC,
     ySortingOrder: Order.ASC,
     searchText: ''
+  };
+
+  constructor(props: Props) {
+    super(props);
+
+    this.sortXColumn = this.getSortColumnFunction(
+      this.sortX,
+      () => this.setState({ xSortingOrder: this.state.xSortingOrder * -1 })
+    );
+
+    this.sortYColumn = this.getSortColumnFunction(
+      this.sortY,
+      () => this.setState({ ySortingOrder: this.state.ySortingOrder * -1 })
+    );
   }
 
-  sortXColumn: () => void = () => {
+  sortX: SortingFunction = (aValue, bValue) => (aValue.x - bValue.x) * this.state.xSortingOrder;
+
+  sortY: SortingFunction = (aValue, bValue) => aValue.y.localeCompare(bValue.y) * this.state.ySortingOrder;
+
+  getSortColumnFunction: SortingColumnGeneratorFunction = (sortingFunction, setStateCallback) => () => {
     const data = this.state.data.concat();
 
-    if (this.state.xSortingOrder === Order.ASC) {
-      data.sort((aValue, bValue) => aValue.x - bValue.x)
-    } else {
-      data.sort((aValue, bValue) => bValue.x - aValue.x)
-    }
+    data.sort(sortingFunction);
 
-    this.setState(({ xSortingOrder }) => ({
-      data,
-      xSortingOrder: xSortingOrder === Order.ASC ? Order.DESC : Order.ASC,
-    }))
-  }
+    this.setState({ data }, setStateCallback)
+  };
 
-  sortYColumn: () => void = () => {
-    const data = this.state.data.concat();
-
-    if (this.state.ySortingOrder === Order.ASC) {
-      data.sort((aValue, bValue) => aValue.y.localeCompare(bValue.y))
-    } else {
-      data.sort((aValue, bValue) => bValue.y.localeCompare(aValue.y))
-    }
-
-    this.setState(({ ySortingOrder }) => ({
-      data,
-      ySortingOrder: ySortingOrder === Order.ASC ? Order.DESC : Order.ASC,
-    }))
-  }
+  sortXColumn: ToVoid;
+  sortYColumn: ToVoid;
 
   filterBySearchText: (event: React.ChangeEvent<HTMLInputElement>) => void = (event) => {
     const searchText = event.currentTarget.value.trim();
 
     this.setState({
       searchText,
-      data: searchText ? mockData.filter(({y}) => y.includes(searchText)) : mockData
+      data: searchText ? mockData.filter(({ y }) => y.includes(searchText)) : mockData
     })
-  }
+  };
 
   render() {
     return (
