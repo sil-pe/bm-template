@@ -1,6 +1,7 @@
 import {ApplicationState} from './types';
 import {dashboardReducer} from '../containers/dashboard/reducer';
 import {Action, Reducer, ReducerMeta} from 'redux-actions';
+import { staffReducer } from 'src/containers/staff/reducer';
 
 
 export type CombinedSeriesplayerReducer<P> = (
@@ -39,4 +40,4 @@ export const combineSeriesplayerReducer = <P>(
 };
 
 
-export const combineAppReducer = combineSeriesplayerReducer<ApplicationState>([dashboardReducer]);
+export const combineAppReducer = combineSeriesplayerReducer<ApplicationState>([dashboardReducer, staffReducer]);

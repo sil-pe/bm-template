@@ -1,5 +1,11 @@
 import * as Redux from 'redux';
 
+export enum LoaderStates {
+  loading = 'loading',
+  success = 'success',
+  error = 'error'
+}
+
 export type RuntimeState = Readonly<{
   availableWidth: number;
   availableHeight: number;
@@ -10,10 +16,12 @@ export type LocalizationState = {
   locale: string;
 };
 
-export enum LoaderStates {
-  loading = 'loading',
-  success = 'success',
-  error = 'error'
+
+export type StaffState = {
+  name : string;
+  role: string,
+  rating: number,
+  birthDate: string
 }
 
 export interface Dispatch extends Redux.Dispatch<ApplicationState> {
@@ -23,6 +31,7 @@ export interface Dispatch extends Redux.Dispatch<ApplicationState> {
 export type ApplicationState = Readonly<{
   runtimeState: RuntimeState;
   localization: LocalizationState;
+  staffListState: StaffState[]
 }>;
 
 export type Store = Redux.Store<ApplicationState>;

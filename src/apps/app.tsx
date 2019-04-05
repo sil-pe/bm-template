@@ -6,6 +6,7 @@ import {Route, Switch} from 'react-router';
 import {ConnectedRouter} from 'react-router-redux';
 import {Localized} from 'src/containers/localized/Localized';
 import {DashboardContainer} from '../containers/dashboard';
+import {StaffContainer} from '../containers/staff';
 import {createStore} from '../store';
 
 const history = createHistory();
@@ -16,7 +17,8 @@ render(
     <ConnectedRouter history={history}>
       <Localized>
         <Switch>
-          <Route path='/' component={DashboardContainer} />
+          <Route path='/' component={DashboardContainer} exact={true} />
+          <Route path='/staff' component={StaffContainer} />
         </Switch>
       </Localized>
     </ConnectedRouter>
