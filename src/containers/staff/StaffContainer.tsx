@@ -4,6 +4,7 @@ import { AnyAction, Dispatch } from 'redux';
 import { updateRating } from './actions';
 import { ApplicationState, StaffState } from 'src/store/types';
 import * as styles from './Staff.scss';
+import { sortByKeyName } from './utils';
 
 // Component
 
@@ -36,31 +37,14 @@ export class Staff extends React.Component<IStaffProps, IStaffState> {
   }
 
   sortByRating = () => {
-    const compare = (a:StaffState, b: StaffState) => {
-      if (a.rating < b.rating)
-        return -1;
-      if (a.rating > b.rating)
-        return 1;
-      return 0;
-    }
-    let staffList = this.state.staffList.slice();
-    staffList.sort(compare);
     this.setState({
-      staffList
+      staffList: sortByKeyName(this.state.staffList, 'rating')
     });
   }
 
   sortByBirthdate = () => {
-    let staffList = this.state.staffList.slice();
-    staffList.sort(function(a: StaffState, b: StaffState) {
-      if (new Date(a.birthDate) < new Date(b.birthDate))
-        return -1;
-      if (new Date(a.birthDate) > new Date(b.birthDate))
-        return 1;
-      return 0;
-    });
     this.setState({
-      staffList
+      staffList: sortByKeyName(this.state.staffList, 'birthDate')
     });
   }
 
