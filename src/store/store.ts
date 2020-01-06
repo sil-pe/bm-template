@@ -1,14 +1,11 @@
 import {History} from 'history';
 import {routerMiddleware} from 'react-router-redux';
-import * as Redux from 'redux';
-import {applyMiddleware} from 'redux';
+import {createStore as initialCreateStore, applyMiddleware} from 'redux';
 import {composeWithDevTools} from 'redux-devtools-extension/logOnlyInProduction';
 import createSagaMiddleware from 'redux-saga';
 
-import {ApplicationState, Store} from './types';
 import {initialApplicationState} from './constants';
 import * as AppReducer from './reducer';
-import {combineAppReducer} from './reducer';
 import rootSaga from './sagas';
 
 /**
@@ -22,10 +19,10 @@ const composeEnhancers = composeWithDevTools({
 /**
  * Create the redux store
  */
-export function createStore(history: History): Store {
+export const createStore = (history: History) => {
   const sagaMiddleware = createSagaMiddleware();
-  const store = Redux.createStore<ApplicationState>(
-    combineAppReducer,
+  const store = initialCreateStore(
+    AppReducer.combineAppReducer,
     initialApplicationState,
     composeEnhancers(
       applyMiddleware(
@@ -43,4 +40,4 @@ export function createStore(history: History): Store {
   }
   sagaMiddleware.run(rootSaga);
   return store;
-}
+};

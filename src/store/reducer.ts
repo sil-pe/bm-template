@@ -1,6 +1,6 @@
 import {ApplicationState} from './types';
 import {dashboardReducer} from '../containers/dashboard/reducer';
-import {Action, Reducer, ReducerMeta} from 'redux-actions';
+import {Action, Reducer} from 'redux-actions';
 
 
 export type CombinedSeriesplayerReducer<P> = (

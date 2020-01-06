@@ -11,6 +11,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "noErrorTruncation": true,
+    "esModuleInterop": true,
     "lib": [
       "dom",
       "es6"

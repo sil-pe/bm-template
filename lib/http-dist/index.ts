@@ -1,7 +1,7 @@
-import * as express from 'express';
-import * as morgan from 'morgan';
+import express from 'express';
+import morgan from 'morgan';
 import {defaultTo} from 'lodash';
-import * as path from 'path';
+import path from 'path';
 
 // process.argv[0] === node binary
 // process.argv[1] === path to script (first argument to node)

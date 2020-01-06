@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import {DEFAULT_TYPE, ERROR_TYPE, REMARK_TYPE, CORRECT_TYPE} from './constants';
 
 import * as styles from './Button.scss';

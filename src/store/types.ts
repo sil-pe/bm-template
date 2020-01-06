@@ -16,10 +16,6 @@ export enum LoaderStates {
   error = 'error'
 }
 
-export interface Dispatch extends Redux.Dispatch<ApplicationState> {
-  (action: any): ApplicationState;
-}
-
 export type ApplicationState = Readonly<{
   runtimeState: RuntimeState;
   localization: LocalizationState;

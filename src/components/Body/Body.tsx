@@ -1,14 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 
-import * as styles from './body.scss';
+import styles from './body.scss';
 
 
-export const Body: React.SFC<{}> =
-  ({children}) => {
-    return (
-      <div className={styles.container}>
-        {children}
-      </div>
-    );
-  };
+export const Body: React.FC = ({children}) => (
+  <div className={styles.container}>
+    {children}
+  </div>
+);
 

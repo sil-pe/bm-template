@@ -3,7 +3,8 @@ import {
   switchToOffline, switchToOnline, windowResized
 } from './actions';
 import {Dashboard, DashboardDispatchProps, DashboardStateProps} from './Dashboard';
-import {ApplicationState, Dispatch} from '../../store/types';
+import {ApplicationState} from '../../store/types';
+import {Dispatch} from 'redux';
 
 export const mapDispatchToProps = (dispatch: Dispatch): DashboardDispatchProps => ({
   onOnline: () => dispatch(switchToOnline()),
